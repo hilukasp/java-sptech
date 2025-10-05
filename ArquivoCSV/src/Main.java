@@ -21,7 +21,7 @@ public class Main {
         //lista e nome do arquivocsv por parametro
         gravarArquivoCSV(lista,"dogs");
         //exibiArquivoCSV("dogs"); //exibe com scanner
-        importarArquivoCSV("dogs"); //forma mais comum
+            importarArquivoCSV("dogs"); //forma mais comum
     }
     public static void gravarArquivoCSV(List<Cachorro> lista,String nomeArq){
         //biblioteca
