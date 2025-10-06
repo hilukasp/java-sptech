@@ -19,6 +19,7 @@ public class Main {
         listarTimesComoObjetos(con);
         atualizarTime(con, "Ponte Preta", 1);
         deletarTime(con, 1);
+        buscarTime(con,"Palmeiras");
     }
 
     // ---------------- Métodos auxiliares ----------------
@@ -86,5 +87,9 @@ public class Main {
     }
 
 
-
+    public static void buscarTime(JdbcTemplate con, String nome){
+        String sql= "SELECT *  FROM Time WHERE nome like ?";
+        List<Time> time = con.query(sql,new BeanPropertyRowMapper<>(Time.class),  "%"+nome+"%");
+        System.out.println(time);
+    }
 }
