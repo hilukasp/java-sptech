@@ -19,7 +19,7 @@ public class Main {
         prateleira.adicionarLivro(l2);
         prateleira.listarLivros();
 
-        //se a tabela pai sumir, tod registro filhos irão sumir
+        //se a tabela pai sumir, todos registro filhos irão sumir
         netflix=null;
         //System.out.println(netflix.getFilmes().get(0).titulo);
 
