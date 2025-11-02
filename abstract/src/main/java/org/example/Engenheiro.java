@@ -10,7 +10,7 @@ public class Engenheiro extends Funcionario{
 
     @Override
     public Double calcularSalario() {
-        return 0.0;
+        return salario;
     }
 
     @Override
