@@ -11,6 +11,8 @@ public abstract class Funcionario {
 
     /*classe abstract serve para padronizar e organizar o que cada elemento tem e faz*/
 
+    /*você tem funções que tem a mesma finalidade mas meios diferentes para calcular*/
+
     private String cpf;
     private String nome;
 
