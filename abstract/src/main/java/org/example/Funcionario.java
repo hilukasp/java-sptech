@@ -22,7 +22,7 @@ public abstract class Funcionario {
     }
 
     //força cada subclasse ter esse métod
-    //cada funcionario tem um salario diferente
+    //cada funcionario calcula o salario de forma diferente
     public abstract Double calcularSalario();
 
     @Override

@@ -1,23 +1,25 @@
 package org.example;
 
 public class Vendedor extends Funcionario{
-    public double salario;
+    public Double vendas;
+    public Double taxa;
 
-    public Vendedor(String cpf, String nome, double salario) {
+    public Vendedor(String cpf, String nome, Double vendas, Double taxa) {
         super(cpf, nome);
-        this.salario = salario;
+        this.vendas = vendas;
+        this.taxa = taxa;
     }
 
     @Override
     public Double calcularSalario() {
-        System.out.println("salario");
-        return salario;
+        return vendas*taxa;
     }
 
     @Override
     public String toString() {
         return "Vendedor{" +
-                "salario=" + salario +
-                "} "+super.toString();
+                "vendas=" + vendas +
+                ", taxa=" + taxa +
+                "} " + super.toString();
     }
 }
