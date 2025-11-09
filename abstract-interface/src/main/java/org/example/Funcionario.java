@@ -1,13 +1,11 @@
 package org.example;
 
-public abstract class Funcionario {
+import java.util.ArrayList;
+import java.util.List;
+
+public abstract class Funcionario  implements Funcao{
     //não permite que você crie um objeto dela
     //não pode ser instânciada
-
-    //herança classe pai
-    /*exibir ele sozinho não faz sentido pois dentro desses funcionarios
-     tem diferentes tipos de trabalhador
-    */
 
     /*classe abstract serve para padronizar e organizar o que cada elemento tem e faz*/
 
@@ -22,8 +20,10 @@ public abstract class Funcionario {
     }
 
     //força cada subclasse ter esse métod
-    //cada funcionario calcula o salario de forma diferente
+    //cada funcionario tem um salario diferente
     public abstract Double calcularSalario();
+
+
 
     @Override
     public String toString() {

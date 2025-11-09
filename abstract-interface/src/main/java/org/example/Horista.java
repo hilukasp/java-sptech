@@ -1,8 +1,14 @@
 package org.example;
 
-public class Horista extends Funcionario{
+
+public class Horista extends Funcionario implements Funcao{
     public Double valorHora;
     public Integer qtdHora;
+
+    @Override
+    public void trabalhar(){
+        System.out.println("Horista trabalhado");
+    }
 
     @Override
     public Double calcularSalario() {

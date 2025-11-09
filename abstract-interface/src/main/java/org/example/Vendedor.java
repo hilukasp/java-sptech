@@ -1,6 +1,6 @@
 package org.example;
 
-public class Vendedor extends Funcionario{
+public class Vendedor extends Funcionario implements Funcao {
     public Double vendas;
     public Double taxa;
 
@@ -10,6 +10,12 @@ public class Vendedor extends Funcionario{
         this.taxa = taxa;
     }
 
+    //interface
+    @Override
+    public void trabalhar() {
+        System.out.println("realizar medição de área");
+    }
+    //abstract
     @Override
     public Double calcularSalario() {
         return vendas*taxa;

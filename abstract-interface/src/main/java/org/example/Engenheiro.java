@@ -1,6 +1,6 @@
 package org.example;
 
-public class Engenheiro extends Funcionario{
+public class Engenheiro extends Funcionario implements Funcao {
     private Double salario;
 
     public Engenheiro(String cpf, String nome, Double salario) {
@@ -8,6 +8,13 @@ public class Engenheiro extends Funcionario{
         this.salario = salario;
     }
 
+    //interface
+    @Override
+    public void trabalhar() {
+        System.out.println("vender seus produtos");
+    }
+
+    //abstract
     @Override
     public Double calcularSalario() {
         return salario;
