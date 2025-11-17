@@ -28,10 +28,18 @@ public class Main {
         System.out.println("total de salario: "+total);
 
         //interface
+        //atributos contidos na interface é statico e imutável
+        /*classe abstract e interface serve para padronizar e organizar o que cada elemento faz*/
+        //a diferença é que a interface você pode implementar quantas vezes você quiser, a abstract é apenas uma vez
+        //cada funcionário trabalha de maneira diferente
         System.out.println();
         for (Funcionario funcionario : funcionarios) {
             funcionario.trabalhar();
         }
 
+        //polimorfismo, classe diferentes ter o mesmo metodo
+        vendedor.trabalhar();
+        engenheiro.trabalhar();
+        horista.trabalhar();
     }
 }
