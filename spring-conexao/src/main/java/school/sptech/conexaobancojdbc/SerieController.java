@@ -33,30 +33,66 @@ public class SerieController {
         return ResponseEntity.status(200).body(series);
     }
 
-    //listar por id
+    //pesquisar por id
     @GetMapping("/{id}")
     public ResponseEntity<Serie> exibirSerie(@PathVariable UUID id){
-        String sql="select * from serie where id = "+ id; //permite sql injection
+        //String sql="select * from serie where id = "+ id; //permite sql injection
         //String sql="select * from serie where id = "+ a'; DROP TABLE serie; --
-        //String sql="select * from serie where id = ?"; //forma ideal
+        String sql="select * from serie where id = ?"; //forma ideal
 
         try{
-            Serie serie=jdbcTemplate.queryForObject(sql,new BeanPropertyRowMapper<Serie>(Serie.class));
-            //Serie serie=jdbcTemplate.queryForObject(sql,new BeanPropertyRowMapper<Serie>(Serie.class),id);
+            //Serie serie=jdbcTemplate.queryForObject(sql,new BeanPropertyRowMapper<Serie>(Serie.class));
+            Serie serie=jdbcTemplate.queryForObject(sql,new BeanPropertyRowMapper<Serie>(Serie.class),id);
             return ResponseEntity.status(200).body(serie);
         }catch (Exception e){
             return ResponseEntity.status(404).build();
         }
     }
 
+    @PostMapping
+    public ResponseEntity<Serie> criarSerie(@RequestBody Serie novaSerie){
+        String sql= "insert into serie (nome,plataforma,nota) values(?,?,?)";
+        try{
+            jdbcTemplate.update(sql,
+                    novaSerie.getNome(),
+                    novaSerie.getPlataforma(),
+                    novaSerie.getNota()
+                    );
+            return ResponseEntity.status(201).body(novaSerie);
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseEntity.status(400).build();
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Serie> atualizarSerie(@PathVariable UUID id, @RequestBody Serie novaSerie){
+        String sql= "update serie set nome = ?, plataforma = ?, nota = ? where id = ?";
+        try{
+            jdbcTemplate.update(sql,
+                    novaSerie.getNome(),
+                    novaSerie.getPlataforma(),
+                    novaSerie.getNota(),
+                    id
+            );
+            return ResponseEntity.status(201).build();
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseEntity.status(400).build();
+        }
+    }
+
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletarSerie(@PathVariable UUID id){
-        String sql="delete from serie where id = ?"; //permite sql injection
+        String sql="delete from serie where id = ?";
 
         try{
             jdbcTemplate.update(sql,id);
             return ResponseEntity.status(204).build();
-        }catch (Exception e){
+        }
+        catch (Exception e){
+            e.printStackTrace();
             return ResponseEntity.status(404).build();
         }
     }
