@@ -96,4 +96,19 @@ public class SerieController {
             return ResponseEntity.status(404).build();
         }
     }
+
+    //buscar por nome
+    @GetMapping("/pesquisar")
+    //http://localhost:8080/series/pesquisar?nome=Bre
+    public ResponseEntity<List<Serie>> pesquisarSeriePorNome(@RequestParam String nome){
+        String sql="select * from serie where nome like ?";
+
+        try{
+            List<Serie> series=jdbcTemplate.query(sql,new BeanPropertyRowMapper<Serie>(Serie.class),"%"+nome+"%");
+            return ResponseEntity.status(200).body(series);
+        }catch (Exception e){
+            return ResponseEntity.status(404).build();
+        }
+    }
+
 }
