@@ -1,5 +1,33 @@
 package com.example.spring_JWToken.auth;
 
-public class CustomUserDetailsService {
+import com.example.spring_JWToken.model.User;
+import com.example.spring_JWToken.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+
+@Service
+public class CustomUserDetailsService implements UserDetailsService {
     //liga seu usuario com o spring security
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
+        Optional<User> usuarioOpt = userRepository.findByEmail(username);
+
+        if (usuarioOpt.isEmpty()) {
+
+            throw new UsernameNotFoundException(String.format("usuário: %s não encontrado", username));
+        }
+
+        return null;
+    }
+
 }

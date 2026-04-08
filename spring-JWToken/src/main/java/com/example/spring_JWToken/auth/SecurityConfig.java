@@ -23,14 +23,14 @@ public class SecurityConfig {
     //configura regras de segurança
     //permissoes
 
-    private final JwtService jwtService;
-
-    private final JwtAuthenticatorFilter jwtAuthenticatorFilter;
-
-    public SecurityConfig(JwtService jwtService, JwtAuthenticatorFilter jwtAuthenticatorFilter) {
-        this.jwtService = jwtService;
-        this.jwtAuthenticatorFilter = jwtAuthenticatorFilter;
-    }
+//    private final JwtService jwtService;
+//
+//    private final JwtAuthenticatorFilter jwtAuthenticatorFilter;
+//
+//    public SecurityConfig(JwtService jwtService, JwtAuthenticatorFilter jwtAuthenticatorFilter) {
+//        this.jwtService = jwtService;
+//        this.jwtAuthenticatorFilter = jwtAuthenticatorFilter;
+//    }
 
     private static final String[] URLS_PERMITIDAS = {
             "/swagger-ui/**",
@@ -51,49 +51,66 @@ public class SecurityConfig {
             "/error/**"
     };
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                // Desabilita restrição de X-Frame-Options para permitir o console H2 no browser.
-                // Em produção, remova isso — o H2 console não deve ser exposto.
-                .headers(headers -> headers
-                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
+//    @Bean
+//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+//        http
+//                // Desabilita restrição de X-Frame-Options para permitir o console H2 no browser.
+//                // Em produção, remova isso — o H2 console não deve ser exposto.
+//                .headers(headers -> headers
+//                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
+//
+//                // Habilita CORS com a configuração definida em corsConfigurationSource()
+//                .cors(Customizer.withDefaults())
+//
+//                // Desabilita CSRF (Cross-Site Request Forgery):
+//                // APIs REST stateless com JWT não precisam de proteção CSRF porque:
+//                // 1. Não usam cookies para autenticação (usam header Authorization)
+//                // 2. Browsers não enviam headers customizados em requisições cross-origin automaticamente
+//                // ATENÇÃO: se usar cookies para armazenar o token, habilite o CSRF novamente!
+//                .csrf(CsrfConfigurer<HttpSecurity>::disable)
+//
+//                // Define quais URLs são públicas e quais exigem autenticação
+//                .authorizeHttpRequests(authorize -> authorize
+//                        .requestMatchers(URLS_PERMITIDAS).permitAll()  // rotas públicas
+//                        .anyRequest().authenticated()                  // todas as outras exigem token
+//                )
+//
+//                // Configura o handler para erros de autenticação (token ausente/inválido → 401/403)
+////                .exceptionHandling(handling -> handling
+////                        .authenticationEntryPoint((AuthenticationEntryPoint) jwtAuthenticatorFilter))
+//
+//                // Define política de sessão: STATELESS
+//                // O servidor NÃO cria nem armazena sessões HTTP.
+//                // Cada requisição é autenticada de forma independente pelo token JWT.
+//                // Isso torna a API escalável horizontalmente (sem estado compartilhado entre servidores).
+//                .sessionManagement(management -> management
+//                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//
+//        // Adiciona o filtro JWT ANTES do filtro padrão de autenticação por usuário/senha.
+//        // Isso garante que o token seja processado antes que o Spring Security tente
+//        // qualquer outro mecanismo de autenticação.
+////        http.addFilterBefore(jwtAuthenticationFilterBean(), UsernamePasswordAuthenticationFilter.class);
+//        .httpBasic(Customizer.withDefaults());
+//
+//        return http.build();
+//    }
 
-                // Habilita CORS com a configuração definida em corsConfigurationSource()
-                .cors(Customizer.withDefaults())
+@Bean
+public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    return http
+            .csrf(csrf -> csrf.disable())
 
-                // Desabilita CSRF (Cross-Site Request Forgery):
-                // APIs REST stateless com JWT não precisam de proteção CSRF porque:
-                // 1. Não usam cookies para autenticação (usam header Authorization)
-                // 2. Browsers não enviam headers customizados em requisições cross-origin automaticamente
-                // ATENÇÃO: se usar cookies para armazenar o token, habilite o CSRF novamente!
-                .csrf(CsrfConfigurer<HttpSecurity>::disable)
+            //desativa login padrão
+            .formLogin(form -> form.disable())
+            .httpBasic(basic -> basic.disable())
 
-                // Define quais URLs são públicas e quais exigem autenticação
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(URLS_PERMITIDAS).permitAll()  // rotas públicas
-                        .anyRequest().authenticated()                  // todas as outras exigem token
-                )
+            //libera rotas públicas
+            .authorizeHttpRequests(auth -> auth
+                    .requestMatchers("/login", "/register").permitAll()
+                    .anyRequest().authenticated()
+            )
 
-                // Configura o handler para erros de autenticação (token ausente/inválido → 401/403)
-//                .exceptionHandling(handling -> handling
-//                        .authenticationEntryPoint((AuthenticationEntryPoint) jwtAuthenticatorFilter))
-
-                // Define política de sessão: STATELESS
-                // O servidor NÃO cria nem armazena sessões HTTP.
-                // Cada requisição é autenticada de forma independente pelo token JWT.
-                // Isso torna a API escalável horizontalmente (sem estado compartilhado entre servidores).
-                .sessionManagement(management -> management
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
-        // Adiciona o filtro JWT ANTES do filtro padrão de autenticação por usuário/senha.
-        // Isso garante que o token seja processado antes que o Spring Security tente
-        // qualquer outro mecanismo de autenticação.
-//        http.addFilterBefore(jwtAuthenticationFilterBean(), UsernamePasswordAuthenticationFilter.class);
-        .httpBasic(Customizer.withDefaults());
-
-        return http.build();
-    }
-
+            .build();
+}
 
 }

@@ -13,7 +13,7 @@ public class UserService {
         this.repository = repository;
     }
 
-    public List<User> findAll() {
+    public List<User> listarTodos() {
         return repository.findAll();
     }
     public User findById(int id) {
