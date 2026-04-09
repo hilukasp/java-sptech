@@ -1,36 +1,25 @@
-package com.example.spring_JWToken.model;
+package com.example.spring_JWToken.dto;
 
-import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import org.antlr.v4.runtime.misc.NotNull;
 
-@Entity
-@Table(name="users")
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-
+public class UserRequestDto {
+    @NotBlank
     private String name;
 
+    @NotBlank
     private String email;
 
+    @NotBlank
     private String password;
 
-    public User() {
+    public UserRequestDto() {
     }
 
-    public User(Integer id, String name, String email, String password) {
-        this.id = id;
+    public UserRequestDto(String name, String email, String password) {
         this.name = name;
         this.email = email;
         this.password = password;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public String getName() {

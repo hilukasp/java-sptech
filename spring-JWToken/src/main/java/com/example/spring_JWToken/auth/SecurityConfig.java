@@ -11,13 +11,15 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-@Configuration
+//por padrão as portas das rotas são bloquados apartir do momento que vc implementa as portas
+@Configuration //essa classe contem um bin de configuração
 @EnableWebSecurity
-@EnableMethodSecurity
 public class SecurityConfig {
     private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
     //configura regras de segurança
@@ -51,66 +53,50 @@ public class SecurityConfig {
             "/error/**"
     };
 
-//    @Bean
-//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//        http
-//                // Desabilita restrição de X-Frame-Options para permitir o console H2 no browser.
-//                // Em produção, remova isso — o H2 console não deve ser exposto.
-//                .headers(headers -> headers
-//                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
-//
-//                // Habilita CORS com a configuração definida em corsConfigurationSource()
-//                .cors(Customizer.withDefaults())
-//
-//                // Desabilita CSRF (Cross-Site Request Forgery):
-//                // APIs REST stateless com JWT não precisam de proteção CSRF porque:
-//                // 1. Não usam cookies para autenticação (usam header Authorization)
-//                // 2. Browsers não enviam headers customizados em requisições cross-origin automaticamente
-//                // ATENÇÃO: se usar cookies para armazenar o token, habilite o CSRF novamente!
-//                .csrf(CsrfConfigurer<HttpSecurity>::disable)
-//
-//                // Define quais URLs são públicas e quais exigem autenticação
-//                .authorizeHttpRequests(authorize -> authorize
-//                        .requestMatchers(URLS_PERMITIDAS).permitAll()  // rotas públicas
-//                        .anyRequest().authenticated()                  // todas as outras exigem token
-//                )
-//
-//                // Configura o handler para erros de autenticação (token ausente/inválido → 401/403)
-////                .exceptionHandling(handling -> handling
-////                        .authenticationEntryPoint((AuthenticationEntryPoint) jwtAuthenticatorFilter))
-//
-//                // Define política de sessão: STATELESS
-//                // O servidor NÃO cria nem armazena sessões HTTP.
-//                // Cada requisição é autenticada de forma independente pelo token JWT.
-//                // Isso torna a API escalável horizontalmente (sem estado compartilhado entre servidores).
-//                .sessionManagement(management -> management
-//                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-//
-//        // Adiciona o filtro JWT ANTES do filtro padrão de autenticação por usuário/senha.
-//        // Isso garante que o token seja processado antes que o Spring Security tente
-//        // qualquer outro mecanismo de autenticação.
-////        http.addFilterBefore(jwtAuthenticationFilterBean(), UsernamePasswordAuthenticationFilter.class);
-//        .httpBasic(Customizer.withDefaults());
-//
-//        return http.build();
-//    }
+//onde define as regras de acesso
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+                //  Permite abrir o H2 Console no navegador
+                .headers(headers -> headers
+                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
 
-@Bean
-public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    return http
-            .csrf(csrf -> csrf.disable())
+                // Habilita CORS com a configuração definida em corsConfigurationSource()
+                .cors(Customizer.withDefaults())
 
-            //desativa login padrão
-            .formLogin(form -> form.disable())
-            .httpBasic(basic -> basic.disable())
+                // Desativa proteção CSRF, necessário para JWT
+                .csrf(CsrfConfigurer<HttpSecurity>::disable)
 
-            //libera rotas públicas
-            .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/login", "/register").permitAll()
-                    .anyRequest().authenticated()
-            )
+                // Define quais URLs são públicas e quais exigem autenticação
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(URLS_PERMITIDAS).permitAll()  // rotas desprotegidas
+                        .anyRequest().authenticated()                  // todas as outras exigem token
+                )
 
-            .build();
-}
+                // Configura o handler para erros de autenticação (token ausente/inválido → 401/403)
+//                .exceptionHandling(handling -> handling
+//                        .authenticationEntryPoint((AuthenticationEntryPoint) jwtAuthenticatorFilter))
+
+                // Define política de sessão: STATELESS
+                // O servidor NÃO cria nem armazena sessões HTTP
+                .sessionManagement(management -> management
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+
+//        http.addFilterBefore(jwtAuthenticationFilterBean(), UsernamePasswordAuthenticationFilter.class);
+        .httpBasic(Customizer.withDefaults()); //essa função é uma autenticação que é feita para teste, sem a integração do jwt
+        //comente a linha depois dos testes
+
+        return http.build();
+
+
+    }
+
+    //responsáve por criptografa a senha
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
 
 }

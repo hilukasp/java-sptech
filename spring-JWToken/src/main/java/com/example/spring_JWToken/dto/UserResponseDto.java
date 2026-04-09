@@ -1,24 +1,15 @@
-package com.example.spring_JWToken.model;
+package com.example.spring_JWToken.dto;
 
-import jakarta.persistence.*;
-
-@Entity
-@Table(name="users")
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class UserResponseDto {
     private Integer id;
-
     private String name;
-
     private String email;
-
     private String password;
 
-    public User() {
+    public UserResponseDto() {
     }
 
-    public User(Integer id, String name, String email, String password) {
+    public UserResponseDto(Integer id, String name, String email, String password) {
         this.id = id;
         this.name = name;
         this.email = email;
