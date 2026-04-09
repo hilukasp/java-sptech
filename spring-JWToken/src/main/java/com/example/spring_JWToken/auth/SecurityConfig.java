@@ -92,7 +92,7 @@ public class SecurityConfig {
 
     }
 
-    //responsáve por criptografa a senha
+    //responsável por criptografa a senha
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

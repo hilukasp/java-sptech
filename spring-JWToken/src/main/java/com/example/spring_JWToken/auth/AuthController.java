@@ -30,12 +30,32 @@ public class AuthController {
     }
 
     @PostMapping("/login")
+
     public ResponseEntity<UserResponseDto> login(@Valid @RequestBody UserRequestDto userRequestDto) {
-        UsernamePasswordAuthenticationToken UserAndPass = new UsernamePasswordAuthenticationToken(userRequestDto.getEmail(),userRequestDto.getPassword());
-        Authentication authentication = authenticationManager.authenticate(UserAndPass);
 
+        UsernamePasswordAuthenticationToken credentials =
+                new UsernamePasswordAuthenticationToken(
+                        userRequestDto.getEmail(),
+                        userRequestDto.getPassword()
+                );
 
-        return null;
+        Authentication authentication = authenticationManager.authenticate(credentials);
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        String token = jwtService.generateToken(authentication);
+
+        User user = userRepository.findByEmail(userRequestDto.getEmail())
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        UserResponseDto response = new UserResponseDto(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                token
+        );
+
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/cadastro")
