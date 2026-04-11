@@ -19,13 +19,17 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Arrays;
 
+//@component cria o objeto para você automaticamente
 @Component
 public class JwtAuthenticatorFilter extends OncePerRequestFilter {
+    //extends. para cada requisição rode o doFilterInternal
+
     /*
     Intercepta TODAS as requisições
     Verifica se tem token
     Valida o token
     Se for válido → libera acesso
+    Middleware
      */
 
     @Autowired
@@ -38,6 +42,7 @@ public class JwtAuthenticatorFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         // Verifica se o endpoint requer autenticação antes de processar a requisição
         if (checkIfEndpointIsNotPublic(request)) {
+            System.out.println("requisição privada");
             String token = recoveryToken(request); // Recupera o token do cabeçalho Authorization da requisição
             if (token != null) {
                 String subject = jwtTokenService.getSubjectFromToken(token); // Obtém o assunto (neste caso, o nome de usuário) do token

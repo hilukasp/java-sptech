@@ -18,7 +18,7 @@ public class JwtService {
     Validar token
     Extrair email do token
      */
-    private static final String SECRET_KEY = "4Z^XrroxR@dWxqf$mTTKwW$!@#qGr4P"; // Chave secreta utilizada para gerar e verificar o token
+    private static final String SECRET_KEY = "4Z^XrroxR@dWxqf$mTTKwW$!@#qGr2P"; // Chave secreta utilizada para gerar e verificar o token
 
     private static final String ISSUER = "pizzurg-api"; // Emissor do token
 

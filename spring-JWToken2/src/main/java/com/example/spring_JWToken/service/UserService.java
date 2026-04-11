@@ -53,7 +53,7 @@ public class UserService {
     }
 
     // Métod responsável por criar um usuário
-    public void createUser(CreateUserDto createUserDto) {
+    public User createUser(CreateUserDto createUserDto) {
 
         Role role = new Role();
         role.setName(createUserDto.getRole());
@@ -68,7 +68,8 @@ public class UserService {
         newUser.setRoles(List.of(role));
 
         // Salva o novo usuário no banco de dados
-        repository.save(newUser);
+        return repository.save(newUser);
+
     }
 
     public List<User> listarTodos() {

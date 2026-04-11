@@ -1,8 +1,6 @@
 package com.example.spring_JWToken.controller;
 
-import com.example.spring_JWToken.dto.CreateUserDto;
-import com.example.spring_JWToken.dto.LoginUserDto;
-import com.example.spring_JWToken.dto.RecoveryJwtTokenDto;
+import com.example.spring_JWToken.dto.*;
 import com.example.spring_JWToken.model.User;
 import com.example.spring_JWToken.repository.UserRepository;
 import com.example.spring_JWToken.service.UserService;
@@ -25,14 +23,21 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<RecoveryJwtTokenDto> authenticateUser(@RequestBody LoginUserDto loginUserDto) {
         RecoveryJwtTokenDto token = userService.authenticateUser(loginUserDto);
-        return new ResponseEntity<>(token, HttpStatus.OK);
+        return ResponseEntity.ok(token);
     }
 
     @PostMapping
-    public ResponseEntity<Void> createUser(@RequestBody CreateUserDto createUserDto) {
-        userService.createUser(createUserDto);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    public ResponseEntity<UserResponseDto> createUser(@RequestBody CreateUserDto createUserDto) {
+        User user=userService.createUser(createUserDto);
+        UserResponseDto responseDto=UserMapper.toResponseDto(user);
+        return ResponseEntity.status(201).body(responseDto);
     }
+
+    @GetMapping("/none")
+    public ResponseEntity<String> getAuthenticationNoneTest() {
+        return new ResponseEntity<>("Sem autenticação", HttpStatus.OK);
+    }
+
 
     @GetMapping("/test")
     public ResponseEntity<String> getAuthenticationTest() {
