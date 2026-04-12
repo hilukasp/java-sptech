@@ -31,9 +31,27 @@ public class SecurityConfig {
     private JwtAuthenticatorFilter userAuthenticationFilter;
 
     public static final String [] ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED = {
+            "/favicon.ico",
+            "/h2-console/**",
             "/users/login", // Url que usaremos para fazer login
             "/users", // Url que usaremos para criar um usuário
-            "/users/none"
+            "/users/none",
+            "/swagger-ui/**",
+            "/swagger-ui.html",
+            "/swagger-resources",
+            "/swagger-resources/**",
+            "/configuration/ui",
+            "/configuration/security",
+            "/api/public/**",
+            "/api/public/authenticate",
+            "/webjars/**",
+            "/v3/api-docs/**",
+            "/actuator/*",
+            "/usuarios/login/**",
+            "/usuarios/logout/**",
+            "/h2-console/**",
+            "/h2-console/*/**",
+            "/error/**"
     };
 
     // Endpoints que requerem autenticação para serem acessados
@@ -57,6 +75,10 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 //habilita todos os cors
                 .cors(Customizer.withDefaults())
+                //h2
+                .headers(headers -> headers
+                        .frameOptions(frame -> frame.disable()) // H2 console
+                )
                 //deixa a api stateless
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -76,7 +98,7 @@ public class SecurityConfig {
                         .authenticationEntryPoint((request, response, authException) -> {
                             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                             response.setContentType("application/json");
-                            response.getWriter().write("{\"error\": \"Nao autenticado\"}");
+                            response.getWriter().write("{\"error\": \"Email ou Senha inválido\"}");
                         })
 
                         // 403 → sem permissão

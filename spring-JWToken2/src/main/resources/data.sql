@@ -1,2 +1,2 @@
-insert into users(name,email,password,id_roles)
-values ('name','a','a');
+insert into users(name,email,password)
+values ('name','teste','teste');

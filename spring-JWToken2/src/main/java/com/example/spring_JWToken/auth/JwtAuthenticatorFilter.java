@@ -42,6 +42,7 @@ public class JwtAuthenticatorFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         // Verifica se o endpoint requer autenticação antes de processar a requisição
         if (checkIfEndpointIsNotPublic(request)) {
+            System.out.println("URI: " + request.getRequestURI());
             System.out.println("requisição privada");
             String token = recoveryToken(request); // Recupera o token do cabeçalho Authorization da requisição
             if (token != null) {
@@ -56,7 +57,11 @@ public class JwtAuthenticatorFilter extends OncePerRequestFilter {
                 // Define o objeto de autenticação no contexto de segurança do Spring Security
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             } else {
-                throw new RuntimeException("O token está ausente.");
+                //exception
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);//erro de 40 status
+                response.setContentType("application/json");
+                response.getWriter().write("{\"error\": \"Token ausente\"}");//escreve oq ta no json
+                return;
             }
         }
         filterChain.doFilter(request, response); // Continua o processamento da requisição
@@ -72,8 +77,20 @@ public class JwtAuthenticatorFilter extends OncePerRequestFilter {
     }
 
     // Verifica se o endpoint requer autenticação antes de processar a requisição
+    //isso inclui endspoints/**
     private boolean checkIfEndpointIsNotPublic(HttpServletRequest request) {
-        String requestURI = request.getRequestURI();
-        return !Arrays.asList(SecurityConfig.ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED).contains(requestURI);
+        String uri = request.getRequestURI();
+
+        return Arrays.stream(SecurityConfig.ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED)
+                .noneMatch(pattern -> {
+                    // remove /** do final se existir
+                    if (pattern.endsWith("/**")) {
+                        String base = pattern.replace("/**", "");
+                        return uri.startsWith(base);
+                    }
+
+                    // comparação normal
+                    return uri.equals(pattern);
+                });
     }
 }

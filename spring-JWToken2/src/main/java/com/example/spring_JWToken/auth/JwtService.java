@@ -5,6 +5,8 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -33,7 +35,7 @@ public class JwtService {
                     .withSubject(user.getUsername()) // Define o assunto do token (neste caso, o nome de usuário)
                     .sign(algorithm); // Assina o token usando o algoritmo especificado
         } catch (JWTCreationException exception){
-            throw new JWTCreationException("Erro ao gerar token.", exception);
+            throw new BadCredentialsException("Erro ao gerar token.", exception);
         }
     }
 
@@ -47,7 +49,7 @@ public class JwtService {
                     .verify(token) // Verifica a validade do token
                     .getSubject(); // Obtém o assunto (neste caso, o nome de usuário) do token
         } catch (JWTVerificationException exception){
-            throw new JWTVerificationException("Token inválido ou expirado.");
+            throw new BadCredentialsException("Token inválido ou expirado.");
         }
     }
 
